@@ -1,57 +1,58 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
-import CategoriaApi from "@/api/categorias.js";
-const categoriaApi = new CategoriaApi();
+import MarcaApi from "@/api/marcas";
+const marcaApi = new MarcaApi();
 
-const defaultCategoria = { id: null, descricao: ""};
-const categorias = ref([]);
-const categoria = reactive({ ...defaultCategoria });
+const defaultMarca = { id: null, nome: "", nacionalidade: "" || null};
+const marcas = ref([]);
+const marca = reactive({ ...defaultMarca });
 
 onMounted(async () => {
-  categorias.value = await categoriaApi.buscarTodasAsCategorias();
-  console.log(categorias.value);
+  marcas.value = await marcaApi.buscarTodasAsMarca();
+  console.log(marcas.value)
 });
 
 function limpar() {
-  Object.assign(categoria, { ...defaultCategoria });
+  Object.assign(marca, { ...defaultMarca });
 }
 
 async function salvar() {
-  if (categoria.id) {
-    await categoriaApi.atualizarCategorias(categoria);
+  if (marca.id) {
+    await marcaApi.atualizarMarca(marca);
   } else {
-    await categoriaApi.adicionarCategorias(categoria);
+    await marcaApi.adicionarMarca(marca);
   }
-  categorias.value = await categoriaApi.buscarTodasAsCategorias();
+  marcas.value = await marcaApi.buscarTodasAsMarca();
   limpar();
 }
 
-function editar(categoria_para_editar) {
-  Object.assign(categoria, categoria_para_editar);
+function editar(marca_para_editar) {
+  Object.assign(marca, marca_para_editar);
 }
 
 async function excluir(id) {
-  await categoriaApi.excluirCategorias(id);
-  categorias.value = await categoriaApi.buscarTodasAsCategorias();
+  await marcaApi.excluirMarca(id);
+  marcas.value = await marcaApi.buscarTodasAsMarca();
   limpar();
 }
 </script>
 
 <template>
-  <h1>Categoria</h1>
+  <h1>Marca</h1>
   <hr />
   <div class="form">
-    <input type="text" v-model="categoria.descricao" placeholder="Descricao" />
+    <input type="text" v-model="marca.nome" placeholder="Nome" />
+    <input type="text" v-model="marca.nacionalidade" placeholder="Nacionalidade" />
     <button @click="salvar" class="gap">Salvar</button>
     <button @click="limpar">Limpar</button>
   </div>
   <hr />
   <ul>
-      <li v-for="categoria in categorias" :key="categoria.id">
-        <span @click="editar(categoria)">
-        ({{ categoria.id }}) - {{ categoria.descricao }}
+      <li v-for="marca in marcas" :key="marca.id">
+        <span @click="editar(marca)">
+        ({{ marca.id }}) - {{ marca.nome }} - {{ marca.nacionalidade }}
       </span>
-      <button @click="excluir(categoria.id)">X</button>
+      <button @click="excluir(marca.id)">X</button>
     </li>
   </ul>
 </template>
@@ -65,6 +66,7 @@ async function excluir(id) {
     margin-right: 10px;
     margin-left: 10px
 }
+
 
 .form {
   margin-bottom: 20px;
@@ -138,6 +140,4 @@ li button {
 li button:hover {
   background-color: #c82333;
 }
-
-
 </style>

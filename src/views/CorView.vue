@@ -1,66 +1,62 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
-import CategoriaApi from "@/api/categorias.js";
-const categoriaApi = new CategoriaApi();
+import CoresApi from "@/api/cores";
+const coresApi = new CoresApi();
 
-const defaultCategoria = { id: null, descricao: ""};
-const categorias = ref([]);
-const categoria = reactive({ ...defaultCategoria });
+const defaultCor = { id: null, nome: ""};
+const cores = ref([]);
+const cor = reactive({ ...defaultCor });
 
 onMounted(async () => {
-  categorias.value = await categoriaApi.buscarTodasAsCategorias();
-  console.log(categorias.value);
+  cores.value = await coresApi.buscarTodasAsCores();
+  console.log(cores.value)
 });
 
 function limpar() {
-  Object.assign(categoria, { ...defaultCategoria });
+  Object.assign(cor, { ...defaultCor });
 }
 
 async function salvar() {
-  if (categoria.id) {
-    await categoriaApi.atualizarCategorias(categoria);
+  if (cor.id) {
+    await coresApi.atualizarCores(cor);
   } else {
-    await categoriaApi.adicionarCategorias(categoria);
+    await coresApi.adicionarCores(cor);
   }
-  categorias.value = await categoriaApi.buscarTodasAsCategorias();
+  cores.value = await coresApi.buscarTodasAsCores();
   limpar();
 }
 
-function editar(categoria_para_editar) {
-  Object.assign(categoria, categoria_para_editar);
+function editar(cor_para_editar) {
+  Object.assign(cor, cor_para_editar);
 }
 
 async function excluir(id) {
-  await categoriaApi.excluirCategorias(id);
-  categorias.value = await categoriaApi.buscarTodasAsCategorias();
+  await coresApi.excluirCor(id);
+  cores.value = await coresApi.buscarTodasAsCores();
   limpar();
 }
 </script>
 
 <template>
-  <h1>Categoria</h1>
+  <h1>Cor</h1>
   <hr />
   <div class="form">
-    <input type="text" v-model="categoria.descricao" placeholder="Descricao" />
+    <input type="text" v-model="cor.nome" placeholder="Nome" />
     <button @click="salvar" class="gap">Salvar</button>
     <button @click="limpar">Limpar</button>
   </div>
   <hr />
   <ul>
-      <li v-for="categoria in categorias" :key="categoria.id">
-        <span @click="editar(categoria)">
-        ({{ categoria.id }}) - {{ categoria.descricao }}
+      <li v-for="cor in cores" :key="cor.id">
+        <span @click="editar(cor)">
+        ({{ cor.id }}) - {{ cor.nome }}
       </span>
-      <button @click="excluir(categoria.id)">X</button>
+      <button @click="excluir(cor.id)">X</button>
     </li>
   </ul>
 </template>
 
 <style scoped>
-.gap{
-    margin-right: 10px;
-    margin-left: 10px
-}
 .gap{
     margin-right: 10px;
     margin-left: 10px
@@ -138,6 +134,5 @@ li button {
 li button:hover {
   background-color: #c82333;
 }
-
 
 </style>

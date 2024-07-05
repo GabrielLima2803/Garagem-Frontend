@@ -1,66 +1,62 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
-import CategoriaApi from "@/api/categorias.js";
-const categoriaApi = new CategoriaApi();
+import AcessorioApi from "@/api/acessorios.js";
+const acessorioApi = new AcessorioApi();
 
-const defaultCategoria = { id: null, descricao: ""};
-const categorias = ref([]);
-const categoria = reactive({ ...defaultCategoria });
+const defaultAcessorio = { id: null, descricao: ""};
+const acessorios = ref([]);
+const acessorio = reactive({ ...defaultAcessorio });
 
 onMounted(async () => {
-  categorias.value = await categoriaApi.buscarTodasAsCategorias();
-  console.log(categorias.value);
+  acessorios.value = await acessorioApi.buscarTodasAsAcessorio();
+  console.log(acessorios.value);
 });
 
 function limpar() {
-  Object.assign(categoria, { ...defaultCategoria });
+  Object.assign(acessorio, { ...defaultAcessorio });
 }
 
 async function salvar() {
-  if (categoria.id) {
-    await categoriaApi.atualizarCategorias(categoria);
+  if (acessorio.id) {
+    await acessorioApi.atualizarAcessorio(acessorio);
   } else {
-    await categoriaApi.adicionarCategorias(categoria);
+    await acessorioApi.adicionarAcessorio(acessorio);
   }
-  categorias.value = await categoriaApi.buscarTodasAsCategorias();
+  acessorios.value = await acessorioApi.buscarTodasAsAcessorio();
   limpar();
 }
 
-function editar(categoria_para_editar) {
-  Object.assign(categoria, categoria_para_editar);
+function editar(acessorio_para_editar) {
+  Object.assign(acessorio, acessorio_para_editar);
 }
 
 async function excluir(id) {
-  await categoriaApi.excluirCategorias(id);
-  categorias.value = await categoriaApi.buscarTodasAsCategorias();
+  await acessorioApi.excluirAcessorio(id);
+  acessorios.value = await acessorioApi.buscarTodasAsAcessorio();
   limpar();
 }
 </script>
 
 <template>
-  <h1>Categoria</h1>
+  <h1>Acessorio</h1>
   <hr />
   <div class="form">
-    <input type="text" v-model="categoria.descricao" placeholder="Descricao" />
+    <input type="text" v-model="acessorio.descricao" placeholder="Descricao" />
     <button @click="salvar" class="gap">Salvar</button>
     <button @click="limpar">Limpar</button>
   </div>
   <hr />
   <ul>
-      <li v-for="categoria in categorias" :key="categoria.id">
-        <span @click="editar(categoria)">
-        ({{ categoria.id }}) - {{ categoria.descricao }}
+      <li v-for="acessorio in acessorios" :key="acessorio.id">
+        <span @click="editar(acessorio)">
+        ({{ acessorio.id }}) - {{ acessorio.descricao }}
       </span>
-      <button @click="excluir(categoria.id)">X</button>
+      <button @click="excluir(acessorio.id)">X</button>
     </li>
   </ul>
 </template>
 
 <style scoped>
-.gap{
-    margin-right: 10px;
-    margin-left: 10px
-}
 .gap{
     margin-right: 10px;
     margin-left: 10px
@@ -138,6 +134,5 @@ li button {
 li button:hover {
   background-color: #c82333;
 }
-
 
 </style>

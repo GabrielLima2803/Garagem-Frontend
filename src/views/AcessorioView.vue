@@ -1,65 +1,80 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import AcessorioApi from "@/api/acessorios.js";
-const acessorioApi = new AcessorioApi();
+import { ref, onMounted } from 'vue'
+import { useAcessorioStore } from '@/stores/acessorios'
 
-const defaultAcessorio = { id: null, descricao: ""};
-const acessorios = ref([]);
-const acessorio = reactive({ ...defaultAcessorio });
+const acessorioStore = useAcessorioStore()
+
+const acessorio = ref({ descricao: '' })
+const acessorios = ref([])  
+
+const salvar = async () => {
+  try {
+    if (acessorio.value.id) {
+      await acessorioStore.updateAcessorio(acessorio.value.id, acessorio.value)
+    } else {
+      await acessorioStore.createAcessorio(acessorio.value)
+    }
+    await AtualizarInformações()  
+    limpar()
+  } catch (error) {
+    console.error('Erro ao salvar o acessório:', error)
+  }
+}
+
+const limpar = () => {
+  acessorio.value = { descricao: '' }
+}
+
+const excluir = async (id) => {
+  try {
+    await acessorioStore.deleteAcessorio(id)
+    await AtualizarInformações()  
+  } catch (error) {
+    console.error('Erro ao excluir o acessório:', error)
+  }
+}
+
+const editar = (acessorioItem) => {
+  acessorio.value = { ...acessorioItem }
+}
+
+const AtualizarInformações = async () => {
+  try {
+    await acessorioStore.getAllAcessorios()
+    acessorios.value = acessorioStore.acessorios  
+  } catch (error) {
+    console.error('Erro ao atualizar as informações:', error)
+  }
+}
 
 onMounted(async () => {
-  acessorios.value = await acessorioApi.buscarTodasAsAcessorio();
-  console.log(acessorios.value);
-});
-
-function limpar() {
-  Object.assign(acessorio, { ...defaultAcessorio });
-}
-
-async function salvar() {
-  if (acessorio.id) {
-    await acessorioApi.atualizarAcessorio(acessorio);
-  } else {
-    await acessorioApi.adicionarAcessorio(acessorio);
-  }
-  acessorios.value = await acessorioApi.buscarTodasAsAcessorio();
-  limpar();
-}
-
-function editar(acessorio_para_editar) {
-  Object.assign(acessorio, acessorio_para_editar);
-}
-
-async function excluir(id) {
-  await acessorioApi.excluirAcessorio(id);
-  acessorios.value = await acessorioApi.buscarTodasAsAcessorio();
-  limpar();
-}
+  await AtualizarInformações()
+})
 </script>
 
 <template>
-  <h1>Acessorio</h1>
+  <h1>Acessório</h1>
   <hr />
   <div class="form">
-    <input type="text" v-model="acessorio.descricao" placeholder="Descricao" />
+    <input type="text" v-model="acessorio.descricao" placeholder="Descrição" />
     <button @click="salvar" class="gap">Salvar</button>
     <button @click="limpar">Limpar</button>
   </div>
   <hr />
   <ul>
-      <li v-for="acessorio in acessorios" :key="acessorio.id">
-        <span @click="editar(acessorio)">
-        ({{ acessorio.id }}) - {{ acessorio.descricao }}
+    <li v-for="acessorioItem in acessorios" :key="acessorioItem.id">
+      <span @click="editar(acessorioItem)">
+        ({{ acessorioItem.id }}) - {{ acessorioItem.descricao }}
       </span>
-      <button @click="excluir(acessorio.id)">X</button>
+      <button @click="excluir(acessorioItem.id)">X</button>
     </li>
   </ul>
 </template>
 
 <style scoped>
-.gap{
-    margin-right: 10px;
-    margin-left: 10px
+.gap {
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 .form {
@@ -134,5 +149,4 @@ li button {
 li button:hover {
   background-color: #c82333;
 }
-
 </style>

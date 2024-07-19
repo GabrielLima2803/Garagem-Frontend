@@ -1,40 +1,55 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import MarcaApi from "@/api/marcas";
-const marcaApi = new MarcaApi();
+import { ref, onMounted } from 'vue'
+import { useMarcaStore } from '@/stores/marcas'
 
-const defaultMarca = { id: null, nome: "", nacionalidade: "" || null};
-const marcas = ref([]);
-const marca = reactive({ ...defaultMarca });
+const marcaStore = useMarcaStore()
+
+const marca = ref({ nome: '', nacionalidade: '' || null })
+const marcas = ref([])  
+
+const salvar = async () => {
+  try {
+    if (marca.value.id) {
+      await marcaStore.updateMarca(marca.value.id, marca.value)
+    } else {
+      await marcaStore.createMarca(marca.value)
+    }
+    await AtualizarInformações()  
+    limpar()
+  } catch (error) {
+    console.error('Erro ao salvar a marca:', error)
+  }
+}
+
+const limpar = () => {
+  marca.value = { nome: '', nacionalidade: '' }
+}
+
+const excluir = async (id) => {
+  try {
+    await marcaStore.deleteMarca(id)
+    await AtualizarInformações() 
+  } catch (error) {
+    console.error('Erro ao excluir a marca:', error)
+  }
+}
+
+const editar = (marcaItem) => {
+  marca.value = { ...marcaItem }
+}
+
+const AtualizarInformações = async () => {
+  try {
+    await marcaStore.getAllMarcas()
+    marcas.value = marcaStore.marcas 
+  } catch (error) {
+    console.error('Erro ao atualizar as informações:', error)
+  }
+}
 
 onMounted(async () => {
-  marcas.value = await marcaApi.buscarTodasAsMarca();
-  console.log(marcas.value)
-});
-
-function limpar() {
-  Object.assign(marca, { ...defaultMarca });
-}
-
-async function salvar() {
-  if (marca.id) {
-    await marcaApi.atualizarMarca(marca);
-  } else {
-    await marcaApi.adicionarMarca(marca);
-  }
-  marcas.value = await marcaApi.buscarTodasAsMarca();
-  limpar();
-}
-
-function editar(marca_para_editar) {
-  Object.assign(marca, marca_para_editar);
-}
-
-async function excluir(id) {
-  await marcaApi.excluirMarca(id);
-  marcas.value = await marcaApi.buscarTodasAsMarca();
-  limpar();
-}
+  await AtualizarInformações()
+})
 </script>
 
 <template>
@@ -48,25 +63,20 @@ async function excluir(id) {
   </div>
   <hr />
   <ul>
-      <li v-for="marca in marcas" :key="marca.id">
-        <span @click="editar(marca)">
-        ({{ marca.id }}) - {{ marca.nome }} - {{ marca.nacionalidade }}
+    <li v-for="marcaItem in marcas" :key="marcaItem.id">
+      <span @click="editar(marcaItem)">
+        ({{ marcaItem.id }}) - {{ marcaItem.nome }} - {{ marcaItem.nacionalidade }}
       </span>
-      <button @click="excluir(marca.id)">X</button>
+      <button @click="excluir(marcaItem.id)">X</button>
     </li>
   </ul>
 </template>
 
 <style scoped>
-.gap{
-    margin-right: 10px;
-    margin-left: 10px
+.gap {
+  margin-right: 10px;
+  margin-left: 10px;
 }
-.gap{
-    margin-right: 10px;
-    margin-left: 10px
-}
-
 
 .form {
   margin-bottom: 20px;

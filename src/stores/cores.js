@@ -22,7 +22,7 @@ export const useCoresStore = defineStore('cores', () => {
 
   const createCor = async (corData) => {
     try {
-      const data = await coresApi.adicionarCor(corData)
+      const data = await coresApi.adicionarCores(corData)
       state.cores.push(data)
     } catch (error) {
       console.error('Failed to create cor:', error)
@@ -31,7 +31,7 @@ export const useCoresStore = defineStore('cores', () => {
 
   const deleteCor = async (id) => {
     try {
-      await coresApi.excluirCor(id)
+      await coresApi.excluirCores(id)
       state.cores = state.cores.filter((cor) => cor.id !== id)
     } catch (error) {
       console.error('Failed to delete cor:', error)
@@ -40,7 +40,7 @@ export const useCoresStore = defineStore('cores', () => {
 
   const updateCor = async (id, corData) => {
     try {
-      const updatedCor = await coresApi.atualizarCor({ id, ...corData })
+      const updatedCor = await coresApi.atualizarCores({ id, ...corData })
       const index = state.cores.findIndex((cor) => cor.id === id)
       if (index !== -1) {
         state.cores[index] = updatedCor

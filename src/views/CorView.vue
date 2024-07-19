@@ -1,40 +1,55 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import CoresApi from "@/api/cores";
-const coresApi = new CoresApi();
+import { ref, onMounted } from 'vue'
+import { useCoresStore } from '@/stores/cores'
 
-const defaultCor = { id: null, nome: ""};
-const cores = ref([]);
-const cor = reactive({ ...defaultCor });
+const coresStore = useCoresStore()
+
+const cor = ref({ nome: '' })
+const cores = ref([])  
+
+const salvar = async () => {
+  try {
+    if (cor.value.id) {
+      await coresStore.updateCor(cor.value.id, cor.value)
+    } else {
+      await coresStore.createCor(cor.value)
+    }
+    await AtualizarInformações() 
+    limpar()
+  } catch (error) {
+    console.error('Erro ao salvar a cor:', error)
+  }
+}
+
+const limpar = () => {
+  cor.value = { nome: '' }
+}
+
+const excluir = async (id) => {
+  try {
+    await coresStore.deleteCor(id)
+    await AtualizarInformações()  
+  } catch (error) {
+    console.error('Erro ao excluir a cor:', error)
+  }
+}
+
+const editar = (corItem) => {
+  cor.value = { ...corItem }
+}
+
+const AtualizarInformações = async () => {
+  try {
+    await coresStore.getAllCores()
+    cores.value = coresStore.cores  
+  } catch (error) {
+    console.error('Erro ao atualizar as informações:', error)
+  }
+}
 
 onMounted(async () => {
-  cores.value = await coresApi.buscarTodasAsCores();
-  console.log(cores.value)
-});
-
-function limpar() {
-  Object.assign(cor, { ...defaultCor });
-}
-
-async function salvar() {
-  if (cor.id) {
-    await coresApi.atualizarCores(cor);
-  } else {
-    await coresApi.adicionarCores(cor);
-  }
-  cores.value = await coresApi.buscarTodasAsCores();
-  limpar();
-}
-
-function editar(cor_para_editar) {
-  Object.assign(cor, cor_para_editar);
-}
-
-async function excluir(id) {
-  await coresApi.excluirCor(id);
-  cores.value = await coresApi.buscarTodasAsCores();
-  limpar();
-}
+  await AtualizarInformações()
+})
 </script>
 
 <template>
@@ -47,19 +62,19 @@ async function excluir(id) {
   </div>
   <hr />
   <ul>
-      <li v-for="cor in cores" :key="cor.id">
-        <span @click="editar(cor)">
-        ({{ cor.id }}) - {{ cor.nome }}
+    <li v-for="corItem in cores" :key="corItem.id">
+      <span @click="editar(corItem)">
+        ({{ corItem.id }}) - {{ corItem.nome }}
       </span>
-      <button @click="excluir(cor.id)">X</button>
+      <button @click="excluir(corItem.id)">X</button>
     </li>
   </ul>
 </template>
 
 <style scoped>
-.gap{
-    margin-right: 10px;
-    margin-left: 10px
+.gap {
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 .form {
@@ -134,5 +149,4 @@ li button {
 li button:hover {
   background-color: #c82333;
 }
-
 </style>

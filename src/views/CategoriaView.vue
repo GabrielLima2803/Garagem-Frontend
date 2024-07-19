@@ -1,69 +1,80 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import CategoriaApi from "@/api/categorias.js";
-const categoriaApi = new CategoriaApi();
+import { ref, onMounted } from 'vue'
+import { useCategoriasStore } from '@/stores/categorias' 
 
-const defaultCategoria = { id: null, descricao: ""};
-const categorias = ref([]);
-const categoria = reactive({ ...defaultCategoria });
+const categoriaStore = useCategoriasStore()
+
+const categoria = ref({ descricao: '' })
+const categorias = ref([]) 
+
+const salvar = async () => {
+  try {
+    if (categoria.value.id) {
+      await categoriaStore.updateCategoria(categoria.value.id, categoria.value)
+    } else {
+      await categoriaStore.createCategoria(categoria.value)
+    }
+    await AtualizarInformações()  
+    limpar()
+  } catch (error) {
+    console.error('Erro ao salvar a categoria:', error)
+  }
+}
+
+const AtualizarInformações = async () => {
+  try {
+    await categoriaStore.getAllCategorias()
+    categorias.value = categoriaStore.categorias  
+  } catch (error) {
+    console.error('Erro ao atualizar as informações:', error)
+  }
+}
+
+const limpar = () => {
+  categoria.value = { descricao: '' }
+}
+
+const excluir = async (id) => {
+  try {
+    await categoriaStore.deleteCategoria(id)
+    await AtualizarInformações()  
+  } catch (error) {
+    console.error('Erro ao excluir a categoria:', error)
+  }
+}
+
+const editar = (categoriaItem) => {
+  categoria.value = { ...categoriaItem }
+}
 
 onMounted(async () => {
-  categorias.value = await categoriaApi.buscarTodasAsCategorias();
-  console.log(categorias.value);
-});
-
-function limpar() {
-  Object.assign(categoria, { ...defaultCategoria });
-}
-
-async function salvar() {
-  if (categoria.id) {
-    await categoriaApi.atualizarCategorias(categoria);
-  } else {
-    await categoriaApi.adicionarCategoria(categoria);
-  }
-  categorias.value = await categoriaApi.buscarTodasAsCategorias();
-  limpar();
-}
-
-function editar(categoria_para_editar) {
-  Object.assign(categoria, categoria_para_editar);
-}
-
-async function excluir(id) {
-  await categoriaApi.excluirCategorias(id);
-  categorias.value = await categoriaApi.buscarTodasAsCategorias();
-  limpar();
-}
+  await AtualizarInformações()
+})
 </script>
 
 <template>
   <h1>Categoria</h1>
   <hr />
   <div class="form">
-    <input type="text" v-model="categoria.descricao" placeholder="Descricao" />
+    <input type="text" v-model="categoria.descricao" placeholder="Descrição" />
     <button @click="salvar" class="gap">Salvar</button>
     <button @click="limpar">Limpar</button>
   </div>
   <hr />
   <ul>
-      <li v-for="categoria in categorias" :key="categoria.id">
-        <span @click="editar(categoria)">
-        ({{ categoria.id }}) - {{ categoria.descricao }}
+    <li v-for="categoriaItem in categorias" :key="categoriaItem.id">
+      <span @click="editar(categoriaItem)">
+        ({{ categoriaItem.id }}) - {{ categoriaItem.descricao }}
       </span>
-      <button @click="excluir(categoria.id)">X</button>
+      <button @click="excluir(categoriaItem.id)">X</button>
     </li>
   </ul>
 </template>
 
 <style scoped>
-.gap{
-    margin-right: 10px;
-    margin-left: 10px
-}
-.gap{
-    margin-right: 10px;
-    margin-left: 10px
+.gap {
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 .form {
@@ -138,6 +149,4 @@ li button {
 li button:hover {
   background-color: #c82333;
 }
-
-
 </style>

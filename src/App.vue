@@ -14,11 +14,13 @@ const authStore = useAuthStore();
     <div v-if="authStore.loggedIn">
     <router-link  to="/logout">Logout</router-link> |
       {{ authStore.user.email }}
-    </div>
+    </div> 
     <router-link v-else to="/login">Login</router-link>
     <router-link to="/cores">Cores</router-link> |
     <router-link to="/marcas">Marca</router-link> |
-    <router-link to="/acessorios">Acessorio</router-link> 
+    <router-link to="/acessorios">Acessorio</router-link>  |
+    <router-link to="/modelos">Modelos</router-link>  |
+    <router-link to="/veiculos">Veiculos</router-link>  
   </header>
   <main>
     <RouterView />

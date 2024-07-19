@@ -20,7 +20,7 @@ async function salvar() {
   if (categoria.id) {
     await categoriaApi.atualizarCategorias(categoria);
   } else {
-    await categoriaApi.adicionarCategorias(categoria);
+    await categoriaApi.adicionarCategoria(categoria);
   }
   categorias.value = await categoriaApi.buscarTodasAsCategorias();
   limpar();

@@ -5,7 +5,7 @@ import { useMarcaStore } from '@/stores/marcas'
 const marcaStore = useMarcaStore()
 
 const marca = ref({ nome: '', nacionalidade: '' || null })
-const marcas = ref([])  
+const marcas = ref([])
 
 const salvar = async () => {
   try {
@@ -14,7 +14,7 @@ const salvar = async () => {
     } else {
       await marcaStore.createMarca(marca.value)
     }
-    await AtualizarInformações()  
+    await AtualizarInformações()
     limpar()
   } catch (error) {
     console.error('Erro ao salvar a marca:', error)
@@ -28,7 +28,7 @@ const limpar = () => {
 const excluir = async (id) => {
   try {
     await marcaStore.deleteMarca(id)
-    await AtualizarInformações() 
+    await AtualizarInformações()
   } catch (error) {
     console.error('Erro ao excluir a marca:', error)
   }
@@ -41,7 +41,7 @@ const editar = (marcaItem) => {
 const AtualizarInformações = async () => {
   try {
     await marcaStore.getAllMarcas()
-    marcas.value = marcaStore.marcas 
+    marcas.value = marcaStore.marcas
   } catch (error) {
     console.error('Erro ao atualizar as informações:', error)
   }
@@ -58,8 +58,10 @@ onMounted(async () => {
   <div class="form">
     <input type="text" v-model="marca.nome" placeholder="Nome" />
     <input type="text" v-model="marca.nacionalidade" placeholder="Nacionalidade" />
-    <button @click="salvar" class="gap">Salvar</button>
-    <button @click="limpar">Limpar</button>
+    <div class="form-buttons">
+      <button @click="salvar" class="gap">Salvar</button>
+      <button @click="limpar">Limpar</button>
+    </div>
   </div>
   <hr />
   <ul>
@@ -73,6 +75,12 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
 .gap {
   margin-right: 10px;
   margin-left: 10px;
@@ -81,32 +89,47 @@ onMounted(async () => {
 .form {
   margin-bottom: 20px;
   display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .form input[type="text"] {
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  transition: border-color 0.3s;
+  padding: 12px 15px;
+  margin-bottom: 12px;
+  border: 1px solid #bbb;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: #f9f9f9;
+  color: #333;
+  font-size: 16px;
 }
 
 .form input[type="text"]:focus {
-  border-color: #007bff;
+  border-color: #888;
+  box-shadow: 0 0 5px rgba(136, 136, 136, 0.5);
+  outline: none;
+}
+
+.form input[type="text"]::placeholder {
+  color: #aaa;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
 }
 
 .form button {
-  padding: 10px;
-  background-color: #007bff;
+  width: 70px;
+  height: 35px;
+  background-color: #888;
   color: #fff;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 .form button:hover {
-  background-color: #0056b3;
+  background-color: #3c3c3c;
 }
 
 ul {
@@ -139,7 +162,7 @@ li span:hover {
 
 li button {
   padding: 3px 6px;
-  background-color: #dc3545;
+  background-color: #000000;
   color: #fff;
   border: none;
   border-radius: 3px;
@@ -148,6 +171,6 @@ li button {
 }
 
 li button:hover {
-  background-color: #c82333;
+  background-color: #4e4a4a;
 }
 </style>

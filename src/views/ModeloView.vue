@@ -79,9 +79,10 @@ onMounted(async () => {
         {{ categoria.descricao }}
       </option>
     </select>
-    <button @click="salvar" class="gap">Salvar</button>
-    <br />
-    <button @click="limpar">Limpar</button>
+    <div class="form-buttons">
+      <button @click="salvar" class="gap">Salvar</button>
+      <button @click="limpar">Limpar</button>
+    </div>
   </div>
   <hr />
   <ul>
@@ -97,6 +98,12 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
 .gap {
   margin-right: 10px;
   margin-left: 10px;
@@ -108,32 +115,44 @@ onMounted(async () => {
   flex-direction: column;
 }
 
-.form input[type="text"],
-.form select {
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  transition: border-color 0.3s;
+.form input, select {
+  padding: 12px 15px;
+  margin-bottom: 12px;
+  border: 1px solid #bbb;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: #f9f9f9;
+  color: #333;
+  font-size: 16px;
 }
 
-.form input[type="text"]:focus,
-.form select:focus {
-  border-color: #007bff;
+.form input:focus, select:focus {
+  border-color: #888;
+  box-shadow: 0 0 5px rgba(136, 136, 136, 0.5);
+  outline: none;
+}
+
+.form input::placeholder, select::placeholder {
+  color: #aaa;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 .form button {
-  padding: 10px;
-  background-color: #007bff;
+  width: 70px;
+  height: 35px;
+  background-color: #888;
   color: #fff;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 .form button:hover {
-  background-color: #0056b3;
+  background-color: #3c3c3c;
 }
 
 ul {

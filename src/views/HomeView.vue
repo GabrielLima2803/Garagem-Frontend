@@ -26,5 +26,13 @@ onMounted(() => {
 </script>
 
 <template>
+  <h1>Bem Vindo</h1>
   <product-list />
 </template>
+
+<style scoped>
+h1{
+  text-align: center;
+  color: #333;
+}
+</style>

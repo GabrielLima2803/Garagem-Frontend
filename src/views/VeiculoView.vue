@@ -71,38 +71,53 @@ onMounted(async () => {
   <h1>Veículos</h1>
   <hr />
   <div class="form">
-    <label for="modelo">Modelo:</label>
-    <select v-model="veiculo.modelo" required>
-      <option value="" disabled>Selecione um modelo</option>
-      <option v-for="modelo in modelos" :key="modelo.id" :value="modelo.id">
-        {{ modelo.nome }}
-      </option>
-    </select>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="modelo">Modelo:</label>
+        <select v-model="veiculo.modelo" required>
+          <option value="" disabled>Selecione um modelo</option>
+          <option v-for="modelo in modelos" :key="modelo.id" :value="modelo.id">
+            {{ modelo.nome }}
+          </option>
+        </select>
+      </div>
 
-    <label for="cor">Cor:</label>
-    <select v-model="veiculo.cor" required>
-      <option value="" disabled>Selecione uma cor</option>
-      <option v-for="cor in cores" :key="cor.id" :value="cor.id">
-        {{ cor.nome }}
-      </option>
-    </select>
+      <div class="form-group">
+        <label for="cor">Cor:</label>
+        <select v-model="veiculo.cor" required>
+          <option value="" disabled>Selecione uma cor</option>
+          <option v-for="cor in cores" :key="cor.id" :value="cor.id">
+            {{ cor.nome }}
+          </option>
+        </select>
+      </div>
+    </div>
 
-    <label for="ano">Ano:</label>
-    <input type="number" v-model="veiculo.ano" required />
+    <div class="form-row">
+      <div class="form-group">
+        <label for="ano">Ano:</label>
+        <input type="number" v-model="veiculo.ano" required />
+      </div>
 
-    <label for="preco">Preço:</label>
-    <input type="number" v-model="veiculo.preco" step="0.01" required />
+      <div class="form-group">
+        <label for="preco">Preço:</label>
+        <input type="number" v-model="veiculo.preco" step="0.01" required />
+      </div>
+    </div>
 
-    <label for="acessorios">Acessórios:</label>
-    <select v-model="veiculo.acessorios" multiple>
-      <option v-for="acessorio in acessorios" :key="acessorio.id" :value="acessorio.id">
-        {{ acessorio.descricao }}
-      </option>
-    </select>
+    <div class="form-group">
+      <label for="acessorios">Acessórios:</label>
+      <select v-model="veiculo.acessorios" multiple class="acessorios">
+        <option v-for="acessorio in acessorios" :key="acessorio.id" :value="acessorio.id">
+          {{ acessorio.descricao }}
+        </option>
+      </select>
+    </div>
 
-    <button @click="salvar" class="gap">Salvar</button>
-    <br />
-    <button @click="limpar">Limpar</button>
+    <div class="form-buttons">
+      <button @click="salvar" class="gap">Salvar</button>
+      <button @click="limpar">Limpar</button>
+    </div>
   </div>
   <hr />
   <ul>
@@ -118,6 +133,12 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
 .gap {
   margin-right: 10px;
   margin-left: 10px;
@@ -127,35 +148,71 @@ onMounted(async () => {
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
-.form input[type="text"],
-.form select {
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  transition: border-color 0.3s;
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 800px;
 }
 
-.form input[type="text"]:focus,
-.form select:focus {
-  border-color: #007bff;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-right: 10px;
+}
+
+.form-group:last-child {
+  margin-right: 0;
+}
+
+.form input, select {
+  padding: 12px 15px;
+  margin-bottom: 12px;
+  border: 1px solid #bbb;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: #f9f9f9;
+  color: #333;
+  font-size: 16px;
+}
+
+.form input:focus, select:focus {
+  border-color: #888;
+  box-shadow: 0 0 5px rgba(136, 136, 136, 0.5);
+  outline: none;
+}
+
+.form input::placeholder, select::placeholder {
+  color: #aaa;
+}
+
+.acessorios{
+  width: 150px;
+  height: 50px;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
 }
 
 .form button {
-  padding: 10px;
-  background-color: #007bff;
+  width: 100px;
+  height: 40px;
+  background-color: #888;
   color: #fff;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 .form button:hover {
-  background-color: #0056b3;
+  background-color: #3c3c3c;
 }
+
 
 ul {
   list-style: none;
@@ -187,7 +244,7 @@ li span:hover {
 
 li button {
   padding: 3px 6px;
-  background-color: #dc3545;
+  background-color: #000000;
   color: #fff;
   border: none;
   border-radius: 3px;
@@ -196,6 +253,6 @@ li button {
 }
 
 li button:hover {
-  background-color: #c82333;
+  background-color: #4e4a4a;
 }
 </style>

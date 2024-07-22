@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useVeiculoStore } from '@/stores/veiculos' 
-import { useModeloStore } from '@/stores/modeloS'
+import { useModeloStore } from '@/stores/modelos'
 import { useCoresStore } from '@/stores/cores' 
 import { useAcessorioStore } from '@/stores/acessorios' 
 
